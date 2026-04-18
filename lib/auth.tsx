@@ -65,12 +65,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
     meta: { full_name: string; role: 'customer' | 'merchant'; company_name?: string }
   ) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: meta },
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+    const res = await fetch(`${supabaseUrl}/functions/v1/auth-signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${anonKey}`,
+        'Apikey': anonKey,
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        full_name: meta.full_name,
+        role: meta.role,
+        company_name: meta.company_name ?? null,
+      }),
     });
-    if (error) return { error: error.message };
+
+    const json = await res.json();
+    if (!res.ok) return { error: json.error ?? 'Signup failed' };
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError) return { error: signInError.message };
+
     return { error: null };
   };
 
