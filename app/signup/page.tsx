@@ -64,7 +64,7 @@ export default function SignupPage() {
 
     setSuccess(true);
     setTimeout(() => {
-      router.push(role === 'merchant' ? '/merchant/dashboard' : '/dashboard');
+      router.push('/dashboard');
     }, 1800);
   };
 

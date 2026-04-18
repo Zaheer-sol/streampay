@@ -36,11 +36,7 @@ export default function LoginPage() {
       return;
     }
 
-    if (role === 'merchant') {
-      router.push('/merchant/dashboard');
-    } else {
-      router.push('/dashboard');
-    }
+    router.push('/dashboard');
   };
 
   const fillDemo = (account: typeof DEMO_ACCOUNTS[number]) => {
